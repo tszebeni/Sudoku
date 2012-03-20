@@ -81,13 +81,16 @@ $(document).ready(function() {
 
     SudokuPresenter.prototype = {
         onCheck: function () {
-            var $tds = this.$table.find("td");
+            var $tds = this.view.$table.find("td"),
+                $input;
             for (var i=0; i < 81; i++) {
-                if (his.model.data.full[i] === parseInt($tds.eq(i).text(), 10)) {
-                    // TODO good
-                } else {
-                    // TODO not good
-                    
+                $input = $tds.eq(i).find("input");
+                if ($input.length) {
+                    if (this.model.data.full[i] === parseInt($input.val(), 10)) {
+                        $input.css("backgroundColor","green");
+                    } else {
+                        $input.css("backgroundColor","red");
+                    }
                 }
             };
         },
