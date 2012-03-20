@@ -1,0 +1,13 @@
+#sudoku table {
+  border: 1px solid black;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+#sudoku table tr td.wall {
+  border-right: 1px solid black;
+}
+
+#sudoku table tr.floor td {
+  border-bottom: 1px solid black;
+}

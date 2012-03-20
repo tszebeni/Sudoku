@@ -9,6 +9,7 @@
         <meta name="viewport" content="width=device-width; initial-scale=1.0" />
         <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
         <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="styles/sudoku.css"/>
     </head>
     <body>
         <div>
@@ -24,7 +25,14 @@
                 </p>
             </nav>
             <div>
-                <div id="sudoku"></div>
+                <div id="sudoku">
+                    <table>
+                        <tbody></tbody>
+                    </table>
+                    <a href="#" class="new">New</a>
+                    <a href="#" class="reset">Reset</a>
+                    <a href="#" class="check">Check</a>
+                </div>
             </div>
             <footer>
                 <p>
@@ -32,7 +40,8 @@
                 </p>
             </footer>
         </div>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-        <script src="/js/sudoku.js" type="text/javascript" charset="utf-8"></script>
+        <!-- script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script -->
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.js"></script>
+        <script src="js/sudoku.js" type="text/javascript" charset="utf-8"></script>
     </body>
 </html>
