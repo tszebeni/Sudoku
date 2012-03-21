@@ -4,7 +4,7 @@
 /*globals $*/
 $(document).ready(function() {
     var SudokuModel, SudokuView, SudokuPresenter;
-    
+
     function everyThird(index) {
         return (index % 3 === 2);
     }
@@ -18,7 +18,7 @@ $(document).ready(function() {
         load: function (id, callback) {
             var model = this;
             this.reset();
-            $.getJSON("service/sudoku.json",{ids:id},function (data) {
+            $.getJSON("service/sudoku.json",{id:id},function (data) {
                 model.data = data;
                 if (callback && $.isFunction(callback)) {
                     callback();
@@ -47,8 +47,7 @@ $(document).ready(function() {
             this.$new.click($.proxy(presenter.onCreate, presenter));
             this.$reset.click($.proxy(presenter.onReset, presenter));
             this.$check.click($.proxy(presenter.onCheck, presenter));
-        },
-        highlight: function () {
+            this.$table.delegate("input", "keypress", $.proxy(presenter.onKeypress, presenter));
         },
         renderTable: function (data) {
             this.$table.empty();
@@ -76,7 +75,7 @@ $(document).ready(function() {
         this.view = view;
         this.model = model;
         this.view.init(this);
-        
+        this.onCreate();
     };
 
     SudokuPresenter.prototype = {
@@ -111,6 +110,12 @@ $(document).ready(function() {
             this.model.load(id_,$.proxy(function () {
                 this.view.renderTable(this.model.data.table);
             },this));
+        },
+        onKeypress: function (e) {
+            var key = e.which;
+            if (!( key >= 48 && key <= 57 || key === 8 || key === 9)) {
+                e.preventDefault();
+            }
         }
     };
 
