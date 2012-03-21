@@ -11,3 +11,11 @@
 #sudoku table tr.floor td {
   border-bottom: 1px solid black;
 }
+
+#sudoku table td input.good {
+  background-color: #00cc00;
+}
+
+#sudoku table td input.wrong {
+  background-color: #ffa0a0;
+}

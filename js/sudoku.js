@@ -18,7 +18,7 @@ $(document).ready(function() {
         load: function (id, callback) {
             var model = this;
             this.reset();
-            $.getJSON("service/sudoku.json",null,function (data) {
+            $.getJSON("service/sudoku.json",{ids:id},function (data) {
                 model.data = data;
                 if (callback && $.isFunction(callback)) {
                     callback();
@@ -80,23 +80,35 @@ $(document).ready(function() {
     };
 
     SudokuPresenter.prototype = {
-        onCheck: function () {
+        onCheck: function (e) {
             var $tds = this.view.$table.find("td"),
-                $input;
+                $input, finished = true;
             for (var i=0; i < 81; i++) {
                 $input = $tds.eq(i).find("input");
                 if ($input.length) {
                     if (this.model.data.full[i] === parseInt($input.val(), 10)) {
-                        $input.css("backgroundColor","green");
+                        $input.removeClass("wrong").addClass("good");
+                        
                     } else {
-                        $input.css("backgroundColor","red");
+                        finished = false;
+                        if ($input.val()) {
+                            $input.addClass("wrong").removeClass("good");
+                        }
                     }
                 }
             };
+            if (finished && !this.notified) {
+                window.alert("You won!");
+                this.notified = true;
+            }
         },
-        onReset: function () {},
-        onCreate: function () {
-            this.model.load(1,$.proxy(function () {
+        onReset: function (e) {
+            this.onCreate(e,this.model.data.id);
+        },
+        onCreate: function (e, id) {
+            var id_ = id || Math.floor(Math.random() * 100);
+            this.notified = false;
+            this.model.load(id_,$.proxy(function () {
                 this.view.renderTable(this.model.data.table);
             },this));
         }
