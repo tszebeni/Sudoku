@@ -1,8 +1,10 @@
 /**
  * @author Tamas_Szebeni
  */
+/*jslint plusplus: true*/
 /*globals $*/
-$(document).ready(function() {
+$(document).ready(function () {
+    "use strict";
     var SudokuModel, SudokuView, SudokuPresenter;
 
     function everyThird(index) {
@@ -18,10 +20,15 @@ $(document).ready(function() {
         load: function (id, callback) {
             var model = this;
             this.reset();
-            $.getJSON("service/sudoku.json",{id:id},function (data) {
-                model.data = data;
-                if (callback && $.isFunction(callback)) {
-                    callback();
+            $.ajax({
+                url: "service/index.php?callback=?",
+                dataType: "jsonp",
+                data: {id: id},
+                success: function (data) {
+                    model.data = data;
+                    if (callback && $.isFunction(callback)) {
+                        callback();
+                    }
                 }
             });
         },
@@ -42,7 +49,7 @@ $(document).ready(function() {
     };
 
     SudokuView.prototype = {
-        init: function(presenter) {
+        init: function (presenter) {
             this.presenter = presenter;
             this.$new.click($.proxy(presenter.onCreate, presenter));
             this.$reset.click($.proxy(presenter.onReset, presenter));
@@ -50,15 +57,16 @@ $(document).ready(function() {
             this.$table.delegate("input", "keypress", $.proxy(presenter.onKeypress, presenter));
         },
         renderTable: function (data) {
+            var i, j, row, value;
             this.$table.empty();
-            for (var i = 0; i < 9; i++) {
-                var row = "<tr>";
-                for (var j = 0; j < 9; j++) {
-                    var value = data[i * 9 + j];
+            for (i = 0; i < 9; i++) {
+                row = "<tr>";
+                for (j = 0; j < 9; j++) {
+                    value = data[i * 9 + j];
                     if (value === 0) {
                         row += "<td><input type=\"text\" maxlength=\"1\" size=\"1\" /></td>";
                     } else {
-                        row += "<td>"+ value +"</td>";
+                        row += "<td>" + value + "</td>";
                     }
                 }
                 row += "</tr>";
@@ -71,7 +79,7 @@ $(document).ready(function() {
         }
     };
 
-    SudokuPresenter = function (view,model) {
+    SudokuPresenter = function (view, model) {
         this.view = view;
         this.model = model;
         this.view.init(this);
@@ -81,13 +89,14 @@ $(document).ready(function() {
     SudokuPresenter.prototype = {
         onCheck: function (e) {
             var $tds = this.view.$table.find("td"),
-                $input, finished = true;
-            for (var i=0; i < 81; i++) {
+                $input,
+                i,
+                finished = true;
+            for (i = 0; i < 81; i++) {
                 $input = $tds.eq(i).find("input");
                 if ($input.length) {
                     if (this.model.data.full[i] === parseInt($input.val(), 10)) {
                         $input.removeClass("wrong").addClass("good");
-                        
                     } else {
                         finished = false;
                         if ($input.val()) {
@@ -95,25 +104,25 @@ $(document).ready(function() {
                         }
                     }
                 }
-            };
+            }
             if (finished && !this.notified) {
                 window.alert("You won!");
                 this.notified = true;
             }
         },
         onReset: function (e) {
-            this.onCreate(e,this.model.data.id);
+            this.onCreate(e, this.model.data.id);
         },
         onCreate: function (e, id) {
-            var id_ = id || Math.floor(Math.random() * 100);
+            id = id || Math.floor(Math.random() * 100);
             this.notified = false;
-            this.model.load(id_,$.proxy(function () {
+            this.model.load(id, $.proxy(function () {
                 this.view.renderTable(this.model.data.table);
-            },this));
+            }, this));
         },
         onKeypress: function (e) {
             var key = e.which;
-            if (!( key >= 48 && key <= 57 || key === 8 || key === 9)) {
+            if (!((key >= 48 && key <= 57) || key === 8 || key === 9)) {
                 e.preventDefault();
             }
         }
@@ -126,5 +135,5 @@ $(document).ready(function() {
         var model = new SudokuModel(),
             view = new SudokuView(),
             presenter = new SudokuPresenter(view, model);
-    })();
+    }());
 });
